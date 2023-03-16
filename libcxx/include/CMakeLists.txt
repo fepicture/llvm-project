@@ -807,8 +807,6 @@ set(files
   experimental/__simd/scalar.h
   experimental/__simd/utility.h
   experimental/__simd/vec_ext.h
-  experimental/algorithm
-  experimental/coroutine
   experimental/deque
   experimental/forward_list
   experimental/iterator
