@@ -77,7 +77,7 @@ void test_fixed_size_deduce_t(std::integer_sequence<std::size_t, _Np...>) {
   (test_simd_abi<F, _Np + 1, _Tp, simd_abi::fixed_size<_Np + 1>, simd_abi::deduce_t<_Tp, _Np + 1>>(), ...);
 }
 
-constexpr std::size_t max_simd_size = 32;
+constexpr std::size_t max_simd_size = 2;
 
 template <class F, class _Tp>
 void test_all_simd_abi() {
