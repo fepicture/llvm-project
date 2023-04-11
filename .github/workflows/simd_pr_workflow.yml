@@ -2,6 +2,8 @@ name: SIMD PR Workflow
 
 on:
   pull_request:
+    branches:    
+      - simd_for_upstream
     paths:
       - 'libcxx/test/std/experimental/simd/*'
       - 'libcxx/include/std/experimental/__simd/*'
