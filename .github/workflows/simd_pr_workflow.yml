@@ -1,0 +1,40 @@
+name: SIMD PR Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'libcxx/test/std/experimental/simd/*'
+      - 'libcxx/include/std/experimental/__simd/*'
+      - 'libcxx/include/std/experimental/simd'
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install ninja-build cmake python3 g++
+
+      - name: Configure and build LLVM
+        run: |
+          mkdir build
+          cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi;libunwind" -DLLVM_RUNTIME_TARGETS="x86_64-unknown-linux-gnu"
+          ninja -C build runtimes
+
+      - name: Build test dependencies
+        run: |
+          ninja -C build runtimes-test-depends
+
+      - name: Run SIMD tests and check results
+        run: |
+          output=$(build/bin/llvm-lit -sv build/runtimes/runtimes-x86_64-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd/)
+          echo "$output"
+          passed_count=$(echo "$output" | grep -Eo 'Passed: [0-9]+' | awk '{print $2}')
+          if [ "$passed_count" -ne "43" ]; then
+            echo "Some tests failed."
+            exit 1
+          fi
