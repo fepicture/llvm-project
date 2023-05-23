@@ -1,0 +1,39 @@
+name: Build and Test on MultiArch
+
+on:
+  schedule:
+    - cron: '20 14 * * *'
+
+jobs:
+  build_job:
+    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    # Run steps on a matrix of 2 arch/distro combinations
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu22.04
+          - arch: s390x
+            distro: ubuntu22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: uraimo/run-on-arch-action@v2
+        name: Build and test
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+          
+          install: |
+            apt update
+            apt install -y ninja-build g++ cmake python3 
+          run: |
+            mkdir build
+            cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang' -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' -DLLVM_RUNTIME_TARGETS='${{ matrix.arch }}-unknown-linux-gnu'
+            ninja -C build runtimes
+            ninja -C build runtimes-test-depends
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --xunit-xml-output test-results.xml --time-tests build/runtimes/runtimes-${{ matrix.arch }}-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd/
