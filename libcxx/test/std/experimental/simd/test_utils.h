@@ -85,9 +85,7 @@ void test_all_simd_abi() {
   test_fixed_size_deduce_t<F, _Tp>(integer_seq_from_make_integer);
 }
 
-using integral_no_bool_types =
-    types::concatenate_t<types::character_types, types::signed_integer_types, types::unsigned_integer_types>;
-using arithmetic_no_bool_types = types::concatenate_t<integral_no_bool_types, types::floating_point_types>;
+using arithmetic_no_bool_types = types::concatenate_t<types::integer_types, types::floating_point_types>;
 
 template <class F>
 struct TestAllSimdAbiFunctor {

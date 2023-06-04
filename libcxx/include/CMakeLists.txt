@@ -24,6 +24,7 @@ set(files
   __algorithm/find_if_not.h
   __algorithm/for_each.h
   __algorithm/for_each_n.h
+  __algorithm/for_each_segment.h
   __algorithm/generate.h
   __algorithm/generate_n.h
   __algorithm/half_positive.h
@@ -173,6 +174,7 @@ set(files
   __algorithm/ranges_sort_heap.h
   __algorithm/ranges_stable_partition.h
   __algorithm/ranges_stable_sort.h
+  __algorithm/ranges_starts_with.h
   __algorithm/ranges_swap_ranges.h
   __algorithm/ranges_transform.h
   __algorithm/ranges_unique.h
@@ -322,7 +324,6 @@ set(files
   __coroutine/trivial_awaitables.h
   __debug
   __debug_utils/randomize_range.h
-  __errc
   __exception/exception.h
   __exception/exception_ptr.h
   __exception/nested_exception.h
@@ -519,10 +520,45 @@ set(files
   __numeric/iota.h
   __numeric/midpoint.h
   __numeric/partial_sum.h
+  __numeric/pstl_reduce.h
+  __numeric/pstl_transform_reduce.h
   __numeric/reduce.h
   __numeric/transform_exclusive_scan.h
   __numeric/transform_inclusive_scan.h
   __numeric/transform_reduce.h
+  __pstl/internal/algorithm_fwd.h
+  __pstl/internal/algorithm_impl.h
+  __pstl/internal/execution_defs.h
+  __pstl/internal/execution_impl.h
+  __pstl/internal/glue_algorithm_defs.h
+  __pstl/internal/glue_algorithm_impl.h
+  __pstl/internal/glue_memory_defs.h
+  __pstl/internal/glue_memory_impl.h
+  __pstl/internal/glue_numeric_defs.h
+  __pstl/internal/glue_numeric_impl.h
+  __pstl/internal/memory_impl.h
+  __pstl/internal/numeric_fwd.h
+  __pstl/internal/numeric_impl.h
+  __pstl/internal/omp/parallel_for.h
+  __pstl/internal/omp/parallel_for_each.h
+  __pstl/internal/omp/parallel_invoke.h
+  __pstl/internal/omp/parallel_merge.h
+  __pstl/internal/omp/parallel_scan.h
+  __pstl/internal/omp/parallel_stable_partial_sort.h
+  __pstl/internal/omp/parallel_stable_sort.h
+  __pstl/internal/omp/parallel_transform_reduce.h
+  __pstl/internal/omp/parallel_transform_scan.h
+  __pstl/internal/omp/util.h
+  __pstl/internal/parallel_backend.h
+  __pstl/internal/parallel_backend_omp.h
+  __pstl/internal/parallel_backend_serial.h
+  __pstl/internal/parallel_backend_tbb.h
+  __pstl/internal/parallel_backend_utils.h
+  __pstl/internal/unseq_backend_simd.h
+  __pstl/internal/utils.h
+  __pstl_algorithm
+  __pstl_memory
+  __pstl_numeric
   __random/bernoulli_distribution.h
   __random/binomial_distribution.h
   __random/cauchy_distribution.h
@@ -578,6 +614,7 @@ set(files
   __ranges/enable_borrowed_range.h
   __ranges/enable_view.h
   __ranges/filter_view.h
+  __ranges/from_range.h
   __ranges/iota_view.h
   __ranges/istream_view.h
   __ranges/join_view.h
@@ -620,9 +657,16 @@ set(files
   __support/xlocale/__nop_locale_mgmt.h
   __support/xlocale/__posix_l_fallback.h
   __support/xlocale/__strtonum_fallback.h
+  __system_error/errc.h
+  __system_error/error_category.h
+  __system_error/error_code.h
+  __system_error/error_condition.h
+  __system_error/system_error.h
   __thread/poll_with_backoff.h
   __thread/timed_backoff_policy.h
   __threading_support
+  __tree
+  __tuple/make_tuple_types.h
   __tuple/pair_like.h
   __tuple/sfinae_helpers.h
   __tuple/tuple_element.h

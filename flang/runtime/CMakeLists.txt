@@ -7,7 +7,7 @@
 #===------------------------------------------------------------------------===#
 
 if (CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
-  cmake_minimum_required(VERSION 3.20.0)
+  cmake_minimum_required(VERSION 3.18.0)
 
   project(FlangRuntime C CXX)
 

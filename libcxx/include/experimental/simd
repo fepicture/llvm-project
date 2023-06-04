@@ -718,9 +718,9 @@ class __simd_reference {
   _Storage& __s_;
   size_t __idx_;
 
-  _LIBCPP_HIDE_FROM_ABI __simd_reference(_Storage& __s, size_t __idx) : __s_(__s), __idx_(__idx) {}
+  __simd_reference(_Storage& __s, size_t __idx) : __s_(__s), __idx_(__idx) {}
 
-  _LIBCPP_HIDE_FROM_ABI _ValueType __get() const { return __s_.__get(__idx_); }
+  _ValueType __get() const { return __s_.__get(__idx_); }
 
   void __set(_ValueType __v) {
     if constexpr (is_same_v<_ValueType, bool>)
@@ -1814,9 +1814,9 @@ public:
   using mask_type  = simd_mask<_Tp, _Abi>;
   using abi_type   = _Abi;
 
-  _LIBCPP_HIDE_FROM_ABI simd() = default;
-  _LIBCPP_HIDE_FROM_ABI simd(const simd&) = default;
-  _LIBCPP_HIDE_FROM_ABI simd& operator=(const simd&) = default;
+  simd()                       = default;
+  simd(const simd&)            = default;
+  simd& operator=(const simd&) = default;
 
   simd(_Storage __s) : __s_(__s) {}
 
@@ -1860,9 +1860,9 @@ public:
   }
 
   // scalar access [simd.subscr]
-  _LIBCPP_HIDE_FROM_ABI reference operator[](size_t __i) { return reference(__s_, __i); }
+  reference operator[](size_t __i) { return reference(__s_, __i); }
 
-  _LIBCPP_HIDE_FROM_ABI value_type operator[](size_t __i) const { return __s_.__get(__i); }
+  value_type operator[](size_t __i) const { return __s_.__get(__i); }
 
   // unary operators [simd.unary]
   simd& operator++() noexcept {
@@ -1987,7 +1987,7 @@ public:
 
   static constexpr size_t size() noexcept { return simd_type::size(); }
 
-  _LIBCPP_HIDE_FROM_ABI simd_mask() = default;
+  simd_mask() = default;
 
   simd_mask(_Storage __s) : __s_(__s) {}
 
