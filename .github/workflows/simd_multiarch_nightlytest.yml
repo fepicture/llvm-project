@@ -1,0 +1,60 @@
+name: Build and Test on MultiArch
+
+on:
+  schedule:
+    - cron: '00 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  build_and_test_on_x86_64:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Build and Test with Docker
+      run: |
+            mkdir build &&
+            cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang' -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' -DLLVM_RUNTIME_TARGETS='x86_64-unknown-linux-gnu' &&
+            ninja -C build runtimes &&
+            ninja -C build runtimes-test-depends &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-x86_64-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd_arch_independent/ &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-x86_64-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd/
+  build_and_test_on_arm64:
+    runs-on: [self-hosted, Linux, ARM64]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Build and Test with Docker
+      run: |
+        docker run --rm -v $GITHUB_WORKSPACE:/root -w /root ci_image:22.04 bash -c "
+            mkdir build &&
+            cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang' -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' -DLLVM_RUNTIME_TARGETS='aarch64-unknown-linux-gnu' &&
+            ninja -C build runtimes &&
+            ninja -C build runtimes-test-depends &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-aarch64-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd_arch_independent/ &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-aarch64-unknown-linux-gnu-bins/libcxx/test/std/experimental/simd/ &&
+            rm -rf build libcxx llvm
+        "
+  build_and_test_on_s390x:
+    runs-on: [self-hosted, Linux, s390x]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Build and Test with Docker
+      run: |
+        docker run --rm -v $GITHUB_WORKSPACE:/root -w /root ci_image:22.04 bash -c "
+            mkdir build &&
+            cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang' -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' -DLLVM_RUNTIME_TARGETS='s390x-ibm-linux-gnu' &&
+            ninja -C build runtimes &&
+            ninja -C build runtimes-test-depends &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-s390x-ibm-linux-gnu-bins/libcxx/test/std/experimental/simd_arch_independent/ &&
+            build/bin/llvm-lit --param=std=c++17 -sv --show-unsupported --time-tests build/runtimes/runtimes-s390x-ibm-linux-gnu-bins/libcxx/test/std/experimental/simd/ &&
+            rm -rf build libcxx llvm
+        "
+      

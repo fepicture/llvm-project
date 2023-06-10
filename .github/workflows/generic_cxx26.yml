@@ -1,0 +1,41 @@
+name: Run Generic_Cxx26 on MultiArch
+
+on:
+  schedule:
+    - cron:  '0 4 * * *' # Runs at 12.00 A.M Beijing time
+  workflow_dispatch:
+
+jobs:
+# below script is modifcation about `libcxx/utils/ci/run-buildbot-container`
+# manual to build a image in `libcxx/utils/ci/Dockerfile`
+  generic_cxx26_ci_check_on_aarch64:
+    runs-on: [self-hosted, Linux, ARM64]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # To make sure we have the entire git history
+
+    - name: Run docker build
+      run: |
+        docker run --volume "${{ github.workspace }}:/llvm" --workdir "/llvm" --cap-add=SYS_PTRACE ldionne/libcxx-builder \
+        bash -c 'sudo su -c "git config --global --add safe.directory /llvm; \
+        CC=\"clang-17\" CI=\"true\" CXX=\"clang++-17\" ENABLE_CLANG_TIDY=\"On\" \
+        GCC_STABLE_VERSION=\"12\" LLVM_HEAD_VERSION=\"17\" LLVM_STABLE_VERSION=\"16\" \
+        ./libcxx/utils/ci/run-buildbot generic-cxx26"'
+      continue-on-error: true
+
+  generic_cxx26_ci_check_on_x86_64:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # To make sure we have the entire git history
+
+    - name: Run docker build
+      run: |
+        docker run --volume "${{ github.workspace }}:/llvm" --workdir "/llvm" --cap-add=SYS_PTRACE ldionne/libcxx-builder \
+        bash -c 'sudo su -c "git config --global --add safe.directory /llvm; \
+        CC=\"clang-17\" CI=\"true\" CXX=\"clang++-17\" ENABLE_CLANG_TIDY=\"On\" \
+        GCC_STABLE_VERSION=\"12\" LLVM_HEAD_VERSION=\"17\" LLVM_STABLE_VERSION=\"16\" \
+        ./libcxx/utils/ci/run-buildbot generic-cxx26"'
+      continue-on-error: true
