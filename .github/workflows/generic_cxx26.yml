@@ -1,8 +1,9 @@
 name: Run Generic_Cxx26 on MultiArch
 
 on:
-  schedule:
-    - cron:  '0 4 * * *' # Runs at 12.00 A.M Beijing time
+# tmp disable due to aarch64 err
+#   schedule:
+#     - cron:  '0 4 * * *' # Runs at 12.00 A.M Beijing time
   workflow_dispatch:
 
 jobs:
