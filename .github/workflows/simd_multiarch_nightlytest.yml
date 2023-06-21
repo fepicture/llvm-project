@@ -13,6 +13,10 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
+    - name: Install Dependency
+      run: |
+            apt update && apt install ninja-build g++ cmake python3 -y
+
     - name: Build and Test with Docker
       run: |
             mkdir build &&
