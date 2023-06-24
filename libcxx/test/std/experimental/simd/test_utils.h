@@ -102,15 +102,10 @@ void test_all_simd_abi() {
   types::for_each(arithmetic_no_bool_types(), TestAllSimdAbiFunctor<F>());
 }
 
-// credit to: https://stackoverflow.com/a/466242
-constexpr size_t next_pow2(size_t v) noexcept {
-  v--;
-  v |= v >> 1;
-  v |= v >> 2;
-  v |= v >> 4;
-  v |= v >> 8;
-  v |= v >> 16;
-  v++;
-  return v;
+constexpr size_t bit_ceil(size_t __val) {
+  size_t __pow = 1;
+  while (__pow < __val)
+    __pow <<= 1;
+  return __pow;
 }
 #endif // TEST_UTIL_H

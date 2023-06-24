@@ -38,7 +38,7 @@ struct CheckSimdCopyFrom {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(_Np));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(_Np));
       ex::simd<_Tp, SimdAbi> origin_simd;
       constexpr auto array_length = origin_simd.size();
 
@@ -52,7 +52,7 @@ struct CheckSimdCopyFrom {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(alignof(_Tp)));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(alignof(_Tp)));
       ex::simd<_Tp, SimdAbi> origin_simd;
       constexpr auto array_length = origin_simd.size();
 
@@ -83,7 +83,7 @@ struct CheckSimdCopyTo {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(_Np));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(_Np));
       const ex::simd<_Tp, SimdAbi> origin_simd([](_Tp i) { return static_cast<_Tp>(i + 1); });
 
       constexpr auto array_length = origin_simd.size();
@@ -96,7 +96,7 @@ struct CheckSimdCopyTo {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(alignof(_Tp)));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(alignof(_Tp)));
       const ex::simd<_Tp, SimdAbi> origin_simd([](_Tp i) { return static_cast<_Tp>(i + 1); });
 
       constexpr auto array_length = origin_simd.size();

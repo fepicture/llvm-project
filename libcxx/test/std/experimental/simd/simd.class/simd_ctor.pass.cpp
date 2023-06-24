@@ -158,7 +158,7 @@ struct CheckLoadSimdCtor {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(_Np));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(_Np));
 
       constexpr auto array_length = ex::simd_size_v<_Tp, SimdAbi>;
 
@@ -171,7 +171,7 @@ struct CheckLoadSimdCtor {
     }
 
     {
-      constexpr auto alignas_size = std::max(next_pow2(sizeof(_Tp)), next_pow2(alignof(_Tp)));
+      constexpr auto alignas_size = std::max(bit_ceil(sizeof(_Tp)), bit_ceil(alignof(_Tp)));
 
       constexpr auto array_length = ex::simd_size_v<_Tp, SimdAbi>;
 

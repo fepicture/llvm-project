@@ -50,23 +50,42 @@ struct CheckMemoryAlignmentScalar {
 struct CheckMemoryAlignmentFixedSize {
   template <class _Tp, class SimdAbi, std::size_t _Np>
   void operator()() {
-    static_assert(ex::memory_alignment<ex::simd<_Tp, SimdAbi>>{}.value == sizeof(_Tp) * next_pow2(_Np));
-    static_assert(ex::memory_alignment_v<ex::simd<_Tp, SimdAbi>> == sizeof(_Tp) * next_pow2(_Np));
+    static_assert(ex::memory_alignment<ex::simd<_Tp, SimdAbi>>{}.value == sizeof(_Tp) * bit_ceil(_Np));
+    static_assert(ex::memory_alignment_v<ex::simd<_Tp, SimdAbi>> == sizeof(_Tp) * bit_ceil(_Np));
   }
 };
 
 struct CheckMemoryAlignmentDeduce {
   template <class _Tp, class SimdAbi, std::size_t _Np>
   void operator()() {
-    static_assert(ex::memory_alignment<ex::simd<_Tp, SimdAbi>>{}.value == sizeof(_Tp) * next_pow2(_Np));
-    static_assert(ex::memory_alignment_v<ex::simd<_Tp, SimdAbi>> == sizeof(_Tp) * next_pow2(_Np));
+    static_assert(ex::memory_alignment<ex::simd<_Tp, SimdAbi>>{}.value == sizeof(_Tp) * bit_ceil(_Np));
+    static_assert(ex::memory_alignment_v<ex::simd<_Tp, SimdAbi>> == sizeof(_Tp) * bit_ceil(_Np));
   }
 };
+
+struct CheckMemoryAlignmentMask {
+  template <class _Tp, class SimdAbi, std::size_t _Np>
+  void operator()() {
+    static_assert(ex::memory_alignment<ex::simd_mask<_Tp, SimdAbi>>{}.value ==
+                  bit_ceil(sizeof(bool) * ex::simd_size_v<_Tp, SimdAbi>));
+    static_assert(
+        ex::memory_alignment_v<ex::simd_mask<_Tp, SimdAbi>> == bit_ceil(sizeof(bool) * ex::simd_size_v<_Tp, SimdAbi>));
+  }
+};
+
 template <class F, std::size_t _Np, class _Tp>
 void test_simd_abi() {}
 template <class F, std::size_t _Np, class _Tp, class SimdAbi, class... SimdAbis>
 void test_simd_abi() {
-  if constexpr (std::is_same_v<F, CheckMemoryAlignmentNative>) {
+  if constexpr (std::is_same_v<_Tp, long double>) {
+    // The size of long double is platform-specific. For instance, on i686-w64-mingw32-clang++,
+    // the size of long double is 12 bytes. Hence, disambiguation is needed.
+
+    static_assert(
+        ex::memory_alignment<ex::simd<_Tp, SimdAbi>>{}.value == bit_ceil(sizeof(_Tp) * ex::simd_size_v<_Tp, SimdAbi>));
+    static_assert(
+        ex::memory_alignment_v<ex::simd<_Tp, SimdAbi>> == bit_ceil(sizeof(_Tp) * ex::simd_size_v<_Tp, SimdAbi>));
+  } else if constexpr (std::is_same_v<F, CheckMemoryAlignmentNative>) {
     F{}.template operator()<_Tp, ex::simd_abi::native<_Tp>, _Np>();
   } else if constexpr (std::is_same_v<F, CheckMemoryAlignmentCompatible>) {
     F{}.template operator()<_Tp, ex::simd_abi::compatible<_Tp>, _Np>();
@@ -74,8 +93,10 @@ void test_simd_abi() {
     F{}.template operator()<_Tp, ex::simd_abi::scalar, _Np>();
   } else if constexpr (std::is_same_v<F, CheckMemoryAlignmentFixedSize>) {
     F{}.template operator()<_Tp, ex::simd_abi::fixed_size<_Np>, _Np>();
-  } else {
+  } else if constexpr (std::is_same_v<F, CheckMemoryAlignmentDeduce>) {
     F{}.template operator()<_Tp, ex::simd_abi::deduce_t<_Tp, _Np>, _Np>();
+  } else {
+    F{}.template operator()<_Tp, SimdAbi, _Np>();
   }
   test_simd_abi<F, _Np, _Tp, SimdAbis...>();
 }
@@ -85,6 +106,6 @@ int main(int, char**) {
   test_all_simd_abi<CheckMemoryAlignmentCompatible>();
   test_all_simd_abi<CheckMemoryAlignmentScalar>();
   test_all_simd_abi<CheckMemoryAlignmentFixedSize>();
-  test_all_simd_abi<CheckMemoryAlignmentFixedSize>();
+  test_all_simd_abi<CheckMemoryAlignmentDeduce>();
   return 0;
 }
