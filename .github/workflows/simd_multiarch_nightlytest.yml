@@ -15,11 +15,11 @@ jobs:
 
     - name: Install Dependency
       run: |
-            apt update && apt install ninja-build g++ cmake python3 -y
+            sudo apt update && sudo apt install ninja-build g++ cmake python3 -y
 
     - name: Build and Test with Docker
       run: |
-            mkdir build &&
+            cd $GITHUB_WORKSPACE && mkdir build &&
             cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS='clang' -DLLVM_ENABLE_RUNTIMES='libcxx;libcxxabi;libunwind' -DLLVM_RUNTIME_TARGETS='x86_64-unknown-linux-gnu' &&
             ninja -C build runtimes &&
             ninja -C build runtimes-test-depends &&
